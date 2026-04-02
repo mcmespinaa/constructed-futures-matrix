@@ -128,6 +128,60 @@ body::after{content:'';position:fixed;inset:0;background-image:url("data:image/s
 
 @keyframes fadeUp{from{opacity:0;transform:translateY(12px)}to{opacity:1;transform:translateY(0)}}
 
+/* Methodology Section */
+.meth-section{max-width:1100px;width:100%;margin-top:48px}
+.meth-divider{width:100%;height:1px;background:var(--border);margin-bottom:32px}
+.meth-header{text-align:center;margin-bottom:28px}
+.meth-header h2{font-family:var(--serif);font-size:1.5rem;font-weight:600;color:var(--text);margin-bottom:6px}
+.meth-header p{font-family:var(--sans);font-size:.85rem;color:var(--text-sec)}
+
+/* Tabs */
+.tabs{display:flex;gap:4px;justify-content:center;margin-bottom:24px;flex-wrap:wrap}
+.tab-btn{font-family:var(--mono);font-size:.7rem;letter-spacing:.06em;padding:8px 18px;border-radius:6px;border:1px solid var(--border);background:transparent;color:var(--text-muted);cursor:pointer;transition:all .25s ease}
+.tab-btn:hover{border-color:var(--tu-base);color:var(--tu-base)}
+.tab-btn.active{background:var(--tu-light);border-color:var(--tu-base);color:var(--tu-base);font-weight:500}
+.tab-panel{display:none}
+.tab-panel.active{display:block}
+
+/* Methodology Cards */
+.meth-grid{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:20px}
+.meth-card{padding:20px 22px;border-radius:8px;border:1px solid var(--border);background:var(--bg-warm)}
+.meth-card-label{font-family:var(--mono);font-size:.6rem;letter-spacing:.1em;text-transform:uppercase;color:var(--tu-base);margin-bottom:6px}
+.meth-card h3{font-family:var(--serif);font-size:1rem;font-weight:600;color:var(--text);margin-bottom:8px}
+.meth-card p{font-family:var(--sans);font-size:.8rem;color:var(--text-sec);line-height:1.55}
+.meth-card .cite{font-family:var(--mono);font-size:.6rem;color:var(--text-muted);margin-top:6px}
+
+/* Tables in methodology */
+.meth-table{width:100%;border-collapse:collapse;margin:16px 0;font-family:var(--sans);font-size:.78rem}
+.meth-table th{font-family:var(--mono);font-size:.6rem;letter-spacing:.08em;text-transform:uppercase;color:var(--text-muted);text-align:left;padding:8px 12px;border-bottom:2px solid var(--border);font-weight:500}
+.meth-table td{padding:8px 12px;border-bottom:1px solid var(--border);color:var(--text-sec);vertical-align:top}
+.meth-table tr:last-child td{border-bottom:none}
+.meth-table .num{font-family:var(--mono);font-weight:500;color:var(--text)}
+.meth-table .highlight{color:var(--fc-sup);font-weight:600}
+.meth-table .accent{color:var(--tu-base);font-weight:500}
+
+/* Funnel */
+.funnel{display:flex;flex-direction:column;align-items:center;gap:4px;margin:20px 0}
+.funnel-step{display:flex;align-items:center;gap:12px;padding:10px 20px;border-radius:6px;border:1px solid var(--border);background:var(--bg-warm);width:100%;max-width:500px}
+.funnel-step .funnel-num{font-family:var(--mono);font-size:1.1rem;font-weight:600;color:var(--tu-base);width:50px;text-align:right;flex-shrink:0}
+.funnel-step .funnel-label{font-family:var(--sans);font-size:.8rem;color:var(--text-sec);flex:1}
+.funnel-arrow{font-family:var(--sans);font-size:.7rem;color:var(--text-muted)}
+
+/* Flow diagram */
+.flow{display:flex;align-items:flex-start;gap:12px;margin:20px 0;flex-wrap:wrap;justify-content:center}
+.flow-box{padding:14px 16px;border-radius:6px;border:1px solid var(--border);background:var(--bg-warm);text-align:center;flex:1;min-width:200px;max-width:280px}
+.flow-box-label{font-family:var(--mono);font-size:.55rem;letter-spacing:.08em;text-transform:uppercase;color:var(--text-muted);margin-bottom:4px}
+.flow-box-content{font-family:var(--sans);font-size:.78rem;color:var(--text-sec);line-height:1.45}
+.flow-connector{font-family:var(--sans);font-size:1.2rem;color:var(--text-muted);align-self:center;flex-shrink:0}
+
+.meth-full{grid-column:1/-1}
+
+@media(max-width:900px){
+  .meth-grid{grid-template-columns:1fr}
+  .flow{flex-direction:column;align-items:center}
+  .flow-connector{transform:rotate(90deg)}
+}
+
 @media(max-width:900px){
   .grid{min-height:auto}
   .cell{padding:16px}
@@ -319,6 +373,279 @@ body::after{content:'';position:fixed;inset:0;background-image:url("data:image/s
   <div class="finding-label">Key Finding</div>
   <div class="finding-text">The discursive space where AI is imagined as enabling genuinely transformative sustainability futures, the "AI for the Future" zone, exists theoretically but is largely unoccupied. The technology marketed as sustainability's greatest enabler may be foreclosing the very imagination sustainability demands.</div>
 </div>
+
+<!-- ═══════════════════════════════════════════
+     METHODOLOGY SECTION
+     ═══════════════════════════════════════════ -->
+
+<div class="meth-section">
+  <div class="meth-divider"></div>
+  <div class="meth-header">
+    <h2>Preliminary Methodology</h2>
+    <p>Critical Discourse Analysis (Fairclough, 1992) applied to naturalistic AI-sustainability discourse</p>
+  </div>
+
+  <!-- Tabs -->
+  <div class="tabs">
+    <button class="tab-btn active" onclick="showTab('purpose')">Purpose & Gap</button>
+    <button class="tab-btn" onclick="showTab('framework')">Theoretical Framework</button>
+    <button class="tab-btn" onclick="showTab('collection')">Data Collection</button>
+    <button class="tab-btn" onclick="showTab('criteria')">Inclusion / Exclusion</button>
+    <button class="tab-btn" onclick="showTab('precoding')">Pre-Coding Results</button>
+    <button class="tab-btn" onclick="showTab('procedure')">NVivo Procedure</button>
+  </div>
+
+  <!-- TAB: Purpose & Gap -->
+  <div class="tab-panel active" id="tab-purpose">
+    <div class="meth-grid">
+      <div class="meth-card">
+        <div class="meth-card-label">Purpose</div>
+        <h3>How do imagined AI futures activate or constrain futures-oriented thinking?</h3>
+        <p>This study investigates how AI imaginaries circulating in sustainability discourse activate or suppress futures consciousness dimensions, and how these patterns construct particular leadership orientations. It examines naturalistic discourse on YouTube and Reddit to capture what practitioners actually say when not responding to a researcher's prompt.</p>
+        <div class="cite">Gümüsay &amp; Reinecke, 2022; Mische, 2009</div>
+      </div>
+      <div class="meth-card">
+        <div class="meth-card-label">Research Questions</div>
+        <h3>RQ1</h3>
+        <p>How are the dimensions of futures consciousness discursively represented or suppressed in online AI-sustainability discourse?</p>
+        <h3 style="margin-top:12px">RQ2</h3>
+        <p>How does the discursive framing of AI for sustainability construct particular leadership orientations along the operational-enabling spectrum?</p>
+      </div>
+      <div class="meth-card meth-full">
+        <div class="meth-card-label">The Research Gap</div>
+        <table class="meth-table">
+          <thead><tr><th>Literature</th><th>What It Has Done</th><th>What It Has Not Done</th></tr></thead>
+          <tbody>
+            <tr><td class="accent">AI + Sustainability</td><td>Mapped 134 SDG targets AI enables, 59 it inhibits. Documented corporate strategies.</td><td>Does not ask how people <em>imagine</em> AI's role or how visions shape action.</td></tr>
+            <tr><td class="accent">STS / Imaginaries</td><td>Demonstrated that collective tech visions are constitutive forces shaping policy and behaviour.</td><td>Operates at collective level. Does not engage individual cognitive capacities.</td></tr>
+            <tr><td class="accent">Futures Consciousness</td><td>Developed and validated a 5-dimension individual-level psychological construct.</td><td>Not applied to discourse analysis, nor connected to AI or leadership theory.</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+
+  <!-- TAB: Theoretical Framework -->
+  <div class="tab-panel" id="tab-framework">
+    <div class="meth-grid">
+      <div class="meth-card">
+        <div class="meth-card-label">Futures Consciousness</div>
+        <h3>Individual Analytical Lens (Textual Level)</h3>
+        <p>Five dimensions describing a person's capacity to engage meaningfully with the future: Time Perspective, Agency Beliefs, Openness to Alternatives, Systems Perception, and Concern for Others.</p>
+        <div class="cite">Ahvenharju et al., 2018; Lalot et al., 2021</div>
+      </div>
+      <div class="meth-card">
+        <div class="meth-card-label">AI Imaginaries</div>
+        <h3>Collective Visions (Discursive Practice Level)</h3>
+        <p>Sociotechnical imaginaries classified along two dimensions: valence (utopian/dystopian) and orientation toward change (instrumental/transformative). Yields the 2x2 typology shown in the matrix above.</p>
+        <div class="cite">Jasanoff &amp; Kim, 2015; Hultin &amp; Mahring, 2025</div>
+      </div>
+      <div class="meth-card">
+        <div class="meth-card-label">Complexity Leadership Theory</div>
+        <h3>Leadership Orientations (Social Practice Level)</h3>
+        <p>Operational leadership (managing, optimising, deploying) vs. Enabling leadership (creating adaptive spaces for emergence and transformation).</p>
+        <div class="cite">Uhl-Bien &amp; Arena, 2018</div>
+      </div>
+      <div class="meth-card">
+        <div class="meth-card-label">Why CDA?</div>
+        <h3>Fairclough's Three Dimensions Map to Three Theories</h3>
+        <table class="meth-table">
+          <thead><tr><th>CDA Level</th><th>Theory</th><th>What It Captures</th></tr></thead>
+          <tbody>
+            <tr><td>Textual</td><td class="accent">FC</td><td>How FC dimensions are linguistically encoded or suppressed</td></tr>
+            <tr><td>Discursive Practice</td><td class="accent">Imaginaries</td><td>How visions circulate across platforms</td></tr>
+            <tr><td>Social Practice</td><td class="accent">CLT</td><td>Which leadership orientations are naturalised</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+
+  <!-- TAB: Data Collection -->
+  <div class="tab-panel" id="tab-collection">
+    <div class="meth-grid">
+      <div class="meth-card">
+        <div class="meth-card-label">Data Sources</div>
+        <h3>Two Discourse Domains</h3>
+        <table class="meth-table">
+          <thead><tr><th>Source</th><th>Register</th><th>Rationale</th></tr></thead>
+          <tbody>
+            <tr><td class="accent">YouTube</td><td>Formal-institutional</td><td>Named speakers, dialogic format, institutional framing</td></tr>
+            <tr><td class="accent">Reddit</td><td>Informal-public</td><td>Anonymity enables candour, systemic critique, visible contestation</td></tr>
+          </tbody>
+        </table>
+        <p style="margin-top:8px">Analysed as distinct domains enabling cross-platform comparison of imaginary circulation.</p>
+      </div>
+      <div class="meth-card">
+        <div class="meth-card-label">Search Strategy</div>
+        <h3>26 YouTube API Queries Across 4 Tiers</h3>
+        <table class="meth-table">
+          <thead><tr><th>Tier</th><th>Queries</th><th>Results</th></tr></thead>
+          <tbody>
+            <tr><td>Tier 1: Core keywords</td><td class="num">5</td><td class="num">225</td></tr>
+            <tr><td>Tier 2: Imaginary-specific</td><td class="num">5</td><td class="num">250</td></tr>
+            <tr><td>Tier 3: Gap-filling</td><td class="num">8</td><td class="num">400</td></tr>
+            <tr><td>Tier 2b: Channel-specific</td><td class="num">8</td><td class="num">252</td></tr>
+            <tr><td><strong>Total</strong></td><td class="num"><strong>26</strong></td><td class="num"><strong>1,127</strong></td></tr>
+          </tbody>
+        </table>
+      </div>
+      <div class="meth-card meth-full">
+        <div class="meth-card-label">Filtering Pipeline</div>
+        <div class="funnel">
+          <div class="funnel-step"><span class="funnel-num">1,127</span><span class="funnel-label">Raw search results from 26 API queries</span></div>
+          <div class="funnel-arrow">&darr; Deduplication</div>
+          <div class="funnel-step"><span class="funnel-num">1,042</span><span class="funnel-label">Unique videos (by video ID)</span></div>
+          <div class="funnel-arrow">&darr; Duration >= 15 min, published 2022-2026</div>
+          <div class="funnel-step"><span class="funnel-num">378</span><span class="funnel-label">Qualifying videos</span></div>
+          <div class="funnel-arrow">&darr; Automated metadata + transcript screening</div>
+          <div class="funnel-step"><span class="funnel-num">32</span><span class="funnel-label">Pre-qualified shortlist for human review</span></div>
+          <div class="funnel-arrow">&darr; Manual screening + 2x2 balance check</div>
+          <div class="funnel-step"><span class="funnel-num">8-10</span><span class="funnel-label">Final corpus for deep CDA analysis</span></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- TAB: Inclusion / Exclusion -->
+  <div class="tab-panel" id="tab-criteria">
+    <div class="meth-grid">
+      <div class="meth-card meth-full">
+        <div class="meth-card-label">Inclusion Criteria</div>
+        <table class="meth-table">
+          <thead><tr><th>Criterion</th><th>Rationale</th><th>Theory Connection</th></tr></thead>
+          <tbody>
+            <tr><td>Speaker holds a named organisational role</td><td>RQ2 examines leadership orientations; requires institutional positioning</td><td class="accent">CLT</td></tr>
+            <tr><td>Engages with BOTH AI and sustainability</td><td>Framework requires discourse constructing AI-sustainability relationships</td><td class="accent">All three</td></tr>
+            <tr><td>Panel, webinar, fireside chat, or keynote with Q&amp;A</td><td>Dialogic formats reveal how speakers negotiate competing imaginaries</td><td class="accent">CDA discursive practice</td></tr>
+            <tr><td>Published 2022-2026</td><td>Captures post-generative AI discourse (ChatGPT Nov 2022)</td><td class="accent">Temporal scope</td></tr>
+            <tr><td>Duration >= 15 minutes</td><td>CDA requires sufficient textual density for modality and transitivity</td><td class="accent">CDA textual level</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <div class="meth-card meth-full">
+        <div class="meth-card-label">Exclusion Criteria</div>
+        <table class="meth-table">
+          <thead><tr><th>Exclude If</th><th>Rationale</th></tr></thead>
+          <tbody>
+            <tr><td>Product demo or vendor pitch</td><td>Marketing discourse, not leadership discourse</td></tr>
+            <tr><td>No identifiable speaker affiliation</td><td>Discursive practice level requires institutional context</td></tr>
+            <tr><td>Purely technical AI content</td><td>Does not engage sustainability futures or leadership</td></tr>
+            <tr><td>Edited highlights under 15 minutes</td><td>Editing removes hedging, pauses, and interactional dynamics</td></tr>
+            <tr><td>Duplicate speaker covering identical ground</td><td>Inflates one imaginary type without analytical diversity</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+
+  <!-- TAB: Pre-Coding Results -->
+  <div class="tab-panel" id="tab-precoding">
+    <div class="meth-grid">
+      <div class="meth-card">
+        <div class="meth-card-label">AI Imaginaries Distribution</div>
+        <h3>10:1 Instrumental-Utopian Dominance</h3>
+        <table class="meth-table">
+          <thead><tr><th>Imaginary</th><th>Codes</th><th>%</th></tr></thead>
+          <tbody>
+            <tr><td>Instrumental-Utopian</td><td class="num">242</td><td class="num">61%</td></tr>
+            <tr><td>Instrumental-Dystopian</td><td class="num">105</td><td class="num">27%</td></tr>
+            <tr><td>Transformative-Utopian</td><td class="num">25</td><td class="num">6%</td></tr>
+            <tr><td>Transformative-Dystopian</td><td class="num">23</td><td class="num">6%</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <div class="meth-card">
+        <div class="meth-card-label">FC Activation / Suppression</div>
+        <h3>Agency Beliefs: The Key Finding</h3>
+        <table class="meth-table">
+          <thead><tr><th>Dimension</th><th>Act.</th><th>Sup.</th><th>Ratio</th></tr></thead>
+          <tbody>
+            <tr><td>Time Perspective</td><td class="num">42</td><td class="num">47</td><td>0.9x</td></tr>
+            <tr><td class="highlight">Agency Beliefs</td><td class="highlight">9</td><td class="highlight">12</td><td class="highlight">0.8x &#9888;</td></tr>
+            <tr><td>Openness to Alternatives</td><td class="num">38</td><td class="num">16</td><td>2.4x</td></tr>
+            <tr><td>Systems Perception</td><td class="num">21</td><td class="num">9</td><td>2.3x</td></tr>
+            <tr><td>Concern for Others</td><td class="num">219</td><td class="num">55</td><td>4.0x</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <div class="meth-card meth-full">
+        <div class="meth-card-label">What This Means</div>
+        <h3>Ethical concern without agency is the discursive recipe for operational leadership</h3>
+        <p>Discourse can be ethically concerned (high Concern for Others, 4:1 activated) while simultaneously being futures-unconscious (suppressed Agency Beliefs, near-balanced Time Perspective). Speakers routinely express care but position AI futures as inevitable rather than chosen. This produces the discursive conditions under which operational leadership ("we care, but we can't change the trajectory") appears natural, and enabling leadership ("we can shape AI's role in sustainability") appears impractical.</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- TAB: NVivo Procedure -->
+  <div class="tab-panel" id="tab-procedure">
+    <div class="meth-grid">
+      <div class="meth-card meth-full">
+        <div class="meth-card-label">7-Phase Analytical Procedure</div>
+        <table class="meth-table">
+          <thead><tr><th>Phase</th><th>Activity</th><th>Per Transcript</th></tr></thead>
+          <tbody>
+            <tr><td class="num">0</td><td>NVivo project setup: node hierarchy, case attributes, memo types</td><td>3-4h (once)</td></tr>
+            <tr><td class="num">1</td><td>Familiarisation: watch video, read transcript twice, write memo</td><td>2-3h</td></tr>
+            <tr><td class="num">2</td><td>First-cycle textual coding: transitivity, modality, nominalisation, vocabulary, presupposition, metaphor, absences (clause by clause)</td><td>4-6h</td></tr>
+            <tr><td class="num">3</td><td>Theory-layer double-coding: AI imaginaries, FC dimensions, leadership</td><td>2-3h</td></tr>
+            <tr><td class="num">4</td><td>Discursive practice: intertextuality, genre, production context, dialogics</td><td>1-2h</td></tr>
+            <tr><td class="num">5</td><td>Social practice: naturalisation, legitimation, hegemony, power</td><td>1-2h</td></tr>
+            <tr><td class="num">6-7</td><td>Cross-case matrix queries + synthesis</td><td>18-27h (corpus)</td></tr>
+          </tbody>
+        </table>
+        <p style="margin-top:8px"><strong>Total: approximately 100-150 hours for 8-10 transcripts.</strong></p>
+      </div>
+      <div class="meth-card">
+        <div class="meth-card-label">Core NVivo Queries</div>
+        <h3>Answering the RQs</h3>
+        <table class="meth-table">
+          <thead><tr><th>Query</th><th>Answers</th></tr></thead>
+          <tbody>
+            <tr><td>Imaginary x FC Dimension</td><td class="accent">RQ1</td></tr>
+            <tr><td>Imaginary x Leadership</td><td class="accent">RQ2</td></tr>
+            <tr><td>FC x Platform</td><td>Cross-platform</td></tr>
+            <tr><td>Modality x Imaginary</td><td>Certainty patterns</td></tr>
+            <tr><td>Agent x Imaginary</td><td>Agency construction</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <div class="meth-card">
+        <div class="meth-card-label">How Everything Connects</div>
+        <div class="flow">
+          <div class="flow-box">
+            <div class="flow-box-label">Gap</div>
+            <div class="flow-box-content">No connection between AI imaginaries, FC, and leadership in sustainability discourse</div>
+          </div>
+          <div class="flow-connector">&rarr;</div>
+          <div class="flow-box">
+            <div class="flow-box-label">Theory</div>
+            <div class="flow-box-content">FC (textual) + Imaginaries (discursive) + CLT (social practice)</div>
+          </div>
+          <div class="flow-connector">&rarr;</div>
+          <div class="flow-box">
+            <div class="flow-box-label">Finding</div>
+            <div class="flow-box-content">"AI for the Future" zone is nearly empty; Agency Beliefs is the only suppressed FC dimension</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+function showTab(tabId) {
+  document.querySelectorAll('.tab-panel').forEach(function(p) { p.classList.remove('active'); });
+  document.querySelectorAll('.tab-btn').forEach(function(b) { b.classList.remove('active'); });
+  document.getElementById('tab-' + tabId).classList.add('active');
+  var btns = document.querySelectorAll('.tab-btn');
+  for (var i = 0; i < btns.length; i++) {
+    if (btns[i].getAttribute('onclick').indexOf(tabId) !== -1) {
+      btns[i].classList.add('active');
+    }
+  }
+}
+</script>
 
 <script>
 (function() {
