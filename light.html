@@ -1,0 +1,358 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Three-Layer Analytical Matrix</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,500;0,600;0,700;1,400;1,500&family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;0,9..40,600;1,9..40,300;1,9..40,400&family=JetBrains+Mono:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+:root {
+  --bg: #faf8f5;
+  --bg-warm: #f5f2ed;
+  --text: #1a1714;
+  --text-sec: #4a463e;
+  --text-muted: #8a857b;
+  --serif: 'Playfair Display', Georgia, serif;
+  --sans: 'DM Sans', -apple-system, sans-serif;
+  --mono: 'JetBrains Mono', monospace;
+  --iu-base: #2c5282;
+  --iu-light: #ebf0f7;
+  --tu-base: #c27803;
+  --tu-light: #fef7e6;
+  --id-base: #9b2c2c;
+  --id-light: #fdf0f0;
+  --td-base: #553c9a;
+  --td-light: #f3f0fa;
+  --fc-act: #2e7d32;
+  --fc-sup: #c62828;
+  --border: rgba(0,0,0,0.08);
+}
+*{margin:0;padding:0;box-sizing:border-box}
+body{background:var(--bg);color:var(--text);font-family:var(--sans);min-height:100vh;display:flex;flex-direction:column;align-items:center;padding:40px 20px 80px}
+body::after{content:'';position:fixed;inset:0;background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.015'/%3E%3C/svg%3E");pointer-events:none;z-index:9999;opacity:.5;mix-blend-mode:multiply}
+
+.header{text-align:center;max-width:800px;margin-bottom:36px}
+.header h1{font-family:var(--serif);font-size:2rem;font-weight:600;line-height:1.2;color:var(--text);margin-bottom:6px;opacity:0;animation:fadeUp .8s ease .2s forwards}
+.header h1 em{font-style:italic;color:var(--tu-base)}
+.header .subtitle{font-family:var(--sans);font-size:.92rem;color:var(--text-sec);margin-bottom:10px;opacity:0;animation:fadeUp .8s ease .4s forwards}
+.header .authors{font-family:var(--mono);font-size:.72rem;letter-spacing:.08em;color:var(--text-muted);opacity:0;animation:fadeUp .8s ease .6s forwards}
+.header .authors .group-tag{display:inline-block;background:var(--tu-light);color:var(--tu-base);padding:2px 8px;border-radius:4px;border:1px solid rgba(194,120,3,0.2);margin-left:6px;vertical-align:middle}
+
+.matrix-wrap{position:relative;width:100%;max-width:1100px}
+.axis-x{display:flex;justify-content:space-between;padding:0 80px;margin-bottom:8px;opacity:0;animation:fadeUp .6s ease .8s forwards}
+.axis-x span{font-family:var(--mono);font-size:.68rem;letter-spacing:.1em;text-transform:uppercase;color:var(--text-muted)}
+.axis-x .arrow{flex:1;text-align:center;font-family:var(--sans);font-size:.75rem;color:var(--text-muted)}
+.matrix-body{display:flex;gap:0}
+.axis-y{writing-mode:vertical-lr;display:flex;flex-direction:column;align-items:center;justify-content:space-between;padding:20px 8px;width:32px;flex-shrink:0}
+.axis-y span{font-family:var(--mono);font-size:.68rem;letter-spacing:.1em;text-transform:uppercase;color:var(--text-muted);transform:rotate(180deg)}
+.axis-y .arrow-v{flex:1;text-align:center;font-family:var(--sans);font-size:.75rem;color:var(--text-muted);transform:rotate(180deg)}
+
+.grid{display:grid;grid-template-columns:1fr 1fr;grid-template-rows:1fr 1fr;gap:6px;flex:1;min-height:520px}
+
+.cell{position:relative;border-radius:8px;padding:24px;display:flex;flex-direction:column;cursor:default;transition:transform .3s ease,box-shadow .3s ease;overflow:hidden;opacity:0}
+.cell:hover{transform:translateY(-2px);box-shadow:0 8px 30px rgba(0,0,0,0.08)}
+.cell.iu{background:var(--iu-light);border:1.5px solid rgba(44,82,130,0.15);animation:fadeUp .7s ease 1s forwards}
+.cell.tu{background:var(--tu-light);border:1.5px solid rgba(194,120,3,0.2);animation:fadeUp .7s ease 1.15s forwards}
+.cell.id{background:var(--id-light);border:1.5px solid rgba(155,44,44,0.12);animation:fadeUp .7s ease 1.3s forwards}
+.cell.td{background:var(--td-light);border:1.5px solid rgba(85,60,154,0.12);animation:fadeUp .7s ease 1.45s forwards}
+
+.cell.tu::before{content:'';position:absolute;inset:-2px;border-radius:10px;border:2px solid var(--tu-base);opacity:0;animation:pulse-glow 3s ease-in-out 2s infinite}
+@keyframes pulse-glow{0%,100%{opacity:0;transform:scale(1)}50%{opacity:.3;transform:scale(1.005)}}
+
+.cell-zone{font-family:var(--mono);font-size:.6rem;letter-spacing:.12em;text-transform:uppercase;margin-bottom:6px;display:flex;align-items:center;gap:6px}
+.cell-zone .star{font-size:.7rem}
+.cell.iu .cell-zone{color:var(--iu-base)}
+.cell.tu .cell-zone{color:var(--tu-base)}
+.cell.id .cell-zone{color:var(--id-base)}
+.cell.td .cell-zone{color:var(--td-base)}
+
+.cell-title{font-family:var(--serif);font-size:1.05rem;font-weight:600;line-height:1.25;margin-bottom:8px}
+.cell.iu .cell-title{color:var(--iu-base)}
+.cell.tu .cell-title{color:var(--tu-base)}
+.cell.id .cell-title{color:var(--id-base)}
+.cell.td .cell-title{color:var(--td-base)}
+
+.cell-desc{font-family:var(--sans);font-size:.78rem;color:var(--text-sec);line-height:1.5;margin-bottom:12px;flex:1}
+
+.keywords{display:flex;flex-wrap:wrap;gap:4px;margin-bottom:14px}
+.kw{font-family:var(--mono);font-size:.6rem;padding:2px 7px;border-radius:3px;letter-spacing:.02em}
+.cell.iu .kw{background:rgba(44,82,130,0.08);color:var(--iu-base);border:1px solid rgba(44,82,130,0.12)}
+.cell.tu .kw{background:rgba(194,120,3,0.08);color:var(--tu-base);border:1px solid rgba(194,120,3,0.15)}
+.cell.id .kw{background:rgba(155,44,44,0.06);color:var(--id-base);border:1px solid rgba(155,44,44,0.1)}
+.cell.td .kw{background:rgba(85,60,154,0.06);color:var(--td-base);border:1px solid rgba(85,60,154,0.1)}
+
+.precoding{display:flex;gap:12px;margin-bottom:14px}
+.stat{display:flex;flex-direction:column;gap:1px}
+.stat-label{font-family:var(--mono);font-size:.55rem;letter-spacing:.08em;text-transform:uppercase;color:var(--text-muted)}
+.stat-val{font-family:var(--mono);font-size:1.3rem;font-weight:500;line-height:1}
+.cell.iu .stat-val{color:var(--iu-base)}
+.cell.tu .stat-val{color:var(--tu-base)}
+.cell.id .stat-val{color:var(--id-base)}
+.cell.td .stat-val{color:var(--td-base)}
+
+.fc-fingerprint{display:flex;flex-direction:column;gap:5px;padding:10px 12px;border-radius:6px;background:rgba(255,255,255,0.6);border:1px solid var(--border)}
+.fc-fingerprint-title{font-family:var(--mono);font-size:.55rem;letter-spacing:.08em;text-transform:uppercase;color:var(--text-muted);margin-bottom:2px}
+.fc-row{display:flex;align-items:center;gap:6px}
+.fc-label{font-family:var(--mono);font-size:.6rem;color:var(--text-sec);width:22px;flex-shrink:0}
+.fc-bar-wrap{flex:1;height:6px;border-radius:3px;background:rgba(0,0,0,0.04);position:relative;overflow:hidden;display:flex}
+.fc-bar-act{height:100%;background:var(--fc-act);border-radius:3px 0 0 3px;transition:width 1.2s ease;width:0}
+.fc-bar-sup{height:100%;background:var(--fc-sup);border-radius:0 3px 3px 0;transition:width 1.2s ease;width:0}
+.fc-val{font-family:var(--mono);font-size:.55rem;color:var(--text-muted);width:40px;text-align:right;flex-shrink:0}
+.fc-row.flagged .fc-label{color:var(--fc-sup);font-weight:600}
+.fc-row.flagged .fc-val{color:var(--fc-sup);font-weight:500}
+
+.fc-legend{display:flex;gap:16px;justify-content:center;margin-top:20px;flex-wrap:wrap;opacity:0;animation:fadeUp .6s ease 1.8s forwards}
+.fc-legend-item{display:flex;align-items:center;gap:5px;font-family:var(--mono);font-size:.65rem;color:var(--text-muted)}
+.fc-legend-dot{width:8px;height:8px;border-radius:2px}
+.fc-legend-dot.act{background:var(--fc-act)}
+.fc-legend-dot.sup{background:var(--fc-sup)}
+
+.aggregate{max-width:1100px;width:100%;margin-top:32px;padding:24px 32px;border-radius:8px;background:white;border:1px solid var(--border);box-shadow:0 2px 12px rgba(0,0,0,0.03);opacity:0;animation:fadeUp .7s ease 2s forwards}
+.aggregate-header{display:flex;justify-content:space-between;align-items:baseline;margin-bottom:16px;flex-wrap:wrap;gap:8px}
+.aggregate-title{font-family:var(--serif);font-size:1.1rem;font-weight:600;color:var(--text)}
+.aggregate-note{font-family:var(--mono);font-size:.6rem;color:var(--text-muted);letter-spacing:.06em}
+.agg-grid{display:grid;grid-template-columns:repeat(5,1fr);gap:16px}
+.agg-dim{text-align:center}
+.agg-dim-label{font-family:var(--mono);font-size:.65rem;letter-spacing:.06em;color:var(--text-sec);margin-bottom:6px}
+.agg-dim-label.flagged{color:var(--fc-sup);font-weight:600}
+.agg-bars{display:flex;justify-content:center;gap:4px;margin-bottom:4px;height:60px;align-items:flex-end}
+.agg-bar{width:20px;border-radius:3px 3px 0 0;transition:height 1.5s ease}
+.agg-bar.act{background:var(--fc-act)}
+.agg-bar.sup{background:var(--fc-sup)}
+.agg-vals{font-family:var(--mono);font-size:.6rem;color:var(--text-muted)}
+.agg-flag{font-family:var(--mono);font-size:.55rem;color:var(--fc-sup);margin-top:4px;font-weight:500}
+
+.finding{max-width:1100px;width:100%;margin-top:20px;padding:18px 24px;border-radius:6px;background:var(--tu-light);border:1px solid rgba(194,120,3,0.15);border-left:3px solid var(--tu-base);opacity:0;animation:fadeUp .7s ease 2.3s forwards}
+.finding-label{font-family:var(--mono);font-size:.6rem;letter-spacing:.1em;text-transform:uppercase;color:var(--tu-base);margin-bottom:4px}
+.finding-text{font-family:var(--serif);font-size:.92rem;font-style:italic;color:var(--text);line-height:1.55}
+
+@keyframes fadeUp{from{opacity:0;transform:translateY(12px)}to{opacity:1;transform:translateY(0)}}
+
+@media(max-width:900px){
+  .grid{min-height:auto}
+  .cell{padding:16px}
+  .cell-title{font-size:.9rem}
+  .agg-grid{grid-template-columns:repeat(3,1fr);gap:12px}
+  .keywords{display:none}
+}
+@media(max-width:600px){
+  .grid{grid-template-columns:1fr;gap:8px}
+  .axis-x,.axis-y{display:none}
+  .matrix-body{flex-direction:column}
+  .agg-grid{grid-template-columns:repeat(2,1fr)}
+}
+</style>
+</head>
+<body>
+
+<div class="header">
+  <h1>Three-Layer Analytical <em>Matrix</em></h1>
+  <div class="subtitle">AI Imaginaries &times; Complexity Leadership &times; Futures Consciousness</div>
+  <div class="authors">Maria Cecilia Espina &amp; Rui Jiang <span class="group-tag">Group 18</span> &middot; Malm&ouml; University 2026</div>
+</div>
+
+<div class="matrix-wrap">
+  <div class="axis-x">
+    <span>Operational</span>
+    <span class="arrow">Leadership Orientation &rarr;</span>
+    <span>Enabling</span>
+  </div>
+
+  <div class="matrix-body">
+    <div class="axis-y">
+      <span>Utopian</span>
+      <span class="arrow-v">Valence &darr;</span>
+      <span>Dystopian</span>
+    </div>
+
+    <div class="grid">
+      <!-- IU -->
+      <div class="cell iu">
+        <div class="cell-zone"><span class="star">&#9733;</span> Dominant Zone</div>
+        <div class="cell-title">AI as Efficiency Engine</div>
+        <div class="cell-desc">AI positioned as an optimisation tool deployed by leaders to manage existing systems more efficiently. The default discursive position.</div>
+        <div class="keywords">
+          <span class="kw">optimise</span><span class="kw">implement</span><span class="kw">deploy</span><span class="kw">scale</span><span class="kw">automate</span><span class="kw">dashboard</span><span class="kw">metrics</span><span class="kw">ROI</span><span class="kw">best practice</span>
+        </div>
+        <div class="precoding">
+          <div class="stat"><span class="stat-label">Imaginary</span><span class="stat-val" data-count="242">0</span></div>
+          <div class="stat"><span class="stat-label">Leadership</span><span class="stat-val" data-count="147">0</span></div>
+        </div>
+        <div class="fc-fingerprint">
+          <div class="fc-fingerprint-title">FC Fingerprint</div>
+          <div class="fc-row"><span class="fc-label">TP</span><div class="fc-bar-wrap"><div class="fc-bar-sup" data-w="65"></div></div><span class="fc-val">mostly -</span></div>
+          <div class="fc-row"><span class="fc-label">AB</span><div class="fc-bar-wrap"><div class="fc-bar-sup" data-w="80"></div></div><span class="fc-val">suppressed</span></div>
+          <div class="fc-row"><span class="fc-label">OA</span><div class="fc-bar-wrap"><div class="fc-bar-sup" data-w="75"></div></div><span class="fc-val">suppressed</span></div>
+          <div class="fc-row"><span class="fc-label">SP</span><div class="fc-bar-wrap"><div class="fc-bar-sup" data-w="70"></div></div><span class="fc-val">suppressed</span></div>
+          <div class="fc-row"><span class="fc-label">CO</span><div class="fc-bar-wrap"><div class="fc-bar-sup" data-w="55"></div></div><span class="fc-val">suppressed</span></div>
+        </div>
+      </div>
+
+      <!-- TU -->
+      <div class="cell tu">
+        <div class="cell-zone"><span class="star">&#10022;</span> AI for the Future</div>
+        <div class="cell-title">AI as Catalyst for Systemic Reimagination</div>
+        <div class="cell-desc">AI enabling leaders to create adaptive spaces where sustainability futures can be collectively reimagined. The aspirational but largely unoccupied zone.</div>
+        <div class="keywords">
+          <span class="kw">reimagine</span><span class="kw">enable</span><span class="kw">facilitate</span><span class="kw">co-create</span><span class="kw">adaptive</span><span class="kw">emergence</span><span class="kw">new possibilities</span>
+        </div>
+        <div class="precoding">
+          <div class="stat"><span class="stat-label">Imaginary</span><span class="stat-val" data-count="25">0</span></div>
+          <div class="stat"><span class="stat-label">Leadership</span><span class="stat-val" data-count="92">0</span></div>
+        </div>
+        <div class="fc-fingerprint">
+          <div class="fc-fingerprint-title">FC Fingerprint</div>
+          <div class="fc-row"><span class="fc-label">TP</span><div class="fc-bar-wrap"><div class="fc-bar-act" data-w="80"></div></div><span class="fc-val">activated</span></div>
+          <div class="fc-row"><span class="fc-label">AB</span><div class="fc-bar-wrap"><div class="fc-bar-act" data-w="85"></div></div><span class="fc-val">activated</span></div>
+          <div class="fc-row"><span class="fc-label">OA</span><div class="fc-bar-wrap"><div class="fc-bar-act" data-w="90"></div></div><span class="fc-val">activated</span></div>
+          <div class="fc-row"><span class="fc-label">SP</span><div class="fc-bar-wrap"><div class="fc-bar-act" data-w="85"></div></div><span class="fc-val">activated</span></div>
+          <div class="fc-row"><span class="fc-label">CO</span><div class="fc-bar-wrap"><div class="fc-bar-act" data-w="90"></div></div><span class="fc-val">activated</span></div>
+        </div>
+      </div>
+
+      <!-- ID -->
+      <div class="cell id">
+        <div class="cell-zone">Reform Zone</div>
+        <div class="cell-title">AI as Risk to Be Managed</div>
+        <div class="cell-desc">AI framed through governance, compliance, and risk mitigation. Acknowledges harm but seeks solutions within existing institutional structures.</div>
+        <div class="keywords">
+          <span class="kw">risk</span><span class="kw">compliance</span><span class="kw">regulate</span><span class="kw">guardrails</span><span class="kw">responsible</span><span class="kw">ethical framework</span><span class="kw">mitigate</span>
+        </div>
+        <div class="precoding">
+          <div class="stat"><span class="stat-label">Imaginary</span><span class="stat-val" data-count="105">0</span></div>
+          <div class="stat"><span class="stat-label">Leadership</span><span class="stat-val" data-count="147">0</span></div>
+        </div>
+        <div class="fc-fingerprint">
+          <div class="fc-fingerprint-title">FC Fingerprint</div>
+          <div class="fc-row"><span class="fc-label">TP</span><div class="fc-bar-wrap"><div class="fc-bar-act" data-w="35"></div><div class="fc-bar-sup" data-w="20"></div></div><span class="fc-val">partial</span></div>
+          <div class="fc-row"><span class="fc-label">AB</span><div class="fc-bar-wrap"><div class="fc-bar-act" data-w="30"></div><div class="fc-bar-sup" data-w="15"></div></div><span class="fc-val">partial</span></div>
+          <div class="fc-row"><span class="fc-label">OA</span><div class="fc-bar-wrap"><div class="fc-bar-sup" data-w="65"></div></div><span class="fc-val">suppressed</span></div>
+          <div class="fc-row"><span class="fc-label">SP</span><div class="fc-bar-wrap"><div class="fc-bar-act" data-w="40"></div></div><span class="fc-val">partial</span></div>
+          <div class="fc-row"><span class="fc-label">CO</span><div class="fc-bar-wrap"><div class="fc-bar-act" data-w="70"></div></div><span class="fc-val">activated</span></div>
+        </div>
+      </div>
+
+      <!-- TD -->
+      <div class="cell td">
+        <div class="cell-zone">Critical Futures Zone</div>
+        <div class="cell-title">AI as Mirror Revealing Structural Failures</div>
+        <div class="cell-desc">AI understood as deepening structural inequalities and foreclosing alternative futures. Rare in mainstream discourse, found in academic and activist spaces.</div>
+        <div class="keywords">
+          <span class="kw">power</span><span class="kw">equity</span><span class="kw">justice</span><span class="kw">whose futures</span><span class="kw">structural</span><span class="kw">decolonise</span><span class="kw">redistribute</span>
+        </div>
+        <div class="precoding">
+          <div class="stat"><span class="stat-label">Imaginary</span><span class="stat-val" data-count="23">0</span></div>
+          <div class="stat"><span class="stat-label">Leadership</span><span class="stat-val" data-count="92">0</span></div>
+        </div>
+        <div class="fc-fingerprint">
+          <div class="fc-fingerprint-title">FC Fingerprint</div>
+          <div class="fc-row"><span class="fc-label">TP</span><div class="fc-bar-wrap"><div class="fc-bar-act" data-w="85"></div></div><span class="fc-val">high</span></div>
+          <div class="fc-row"><span class="fc-label">AB</span><div class="fc-bar-wrap"><div class="fc-bar-act" data-w="80"></div></div><span class="fc-val">high</span></div>
+          <div class="fc-row"><span class="fc-label">OA</span><div class="fc-bar-wrap"><div class="fc-bar-act" data-w="90"></div></div><span class="fc-val">high</span></div>
+          <div class="fc-row"><span class="fc-label">SP</span><div class="fc-bar-wrap"><div class="fc-bar-act" data-w="90"></div></div><span class="fc-val">high</span></div>
+          <div class="fc-row"><span class="fc-label">CO</span><div class="fc-bar-wrap"><div class="fc-bar-act" data-w="95"></div></div><span class="fc-val">high</span></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="fc-legend">
+  <div class="fc-legend-item"><div class="fc-legend-dot act"></div> FC Activated</div>
+  <div class="fc-legend-item"><div class="fc-legend-dot sup"></div> FC Suppressed</div>
+  <div class="fc-legend-item" style="font-weight:500;color:var(--text-sec)">TP = Time &middot; AB = Agency &middot; OA = Openness &middot; SP = Systems &middot; CO = Concern</div>
+</div>
+
+<!-- Aggregate FC -->
+<div class="aggregate">
+  <div class="aggregate-header">
+    <div class="aggregate-title">Futures Consciousness Across Corpus</div>
+    <div class="aggregate-note">Pre-coding: 6 well-segmented transcripts, n=329 FC codes</div>
+  </div>
+  <div class="agg-grid">
+    <div class="agg-dim">
+      <div class="agg-dim-label">Time Perspective</div>
+      <div class="agg-bars">
+        <div class="agg-bar act" data-h="42" style="height:0"></div>
+        <div class="agg-bar sup" data-h="47" style="height:0"></div>
+      </div>
+      <div class="agg-vals"><span style="color:var(--fc-act)">42</span> / <span style="color:var(--fc-sup)">47</span></div>
+    </div>
+    <div class="agg-dim">
+      <div class="agg-dim-label flagged">Agency Beliefs &#9888;</div>
+      <div class="agg-bars">
+        <div class="agg-bar act" data-h="9" style="height:0"></div>
+        <div class="agg-bar sup" data-h="12" style="height:0"></div>
+      </div>
+      <div class="agg-vals"><span style="color:var(--fc-act)">9</span> / <span style="color:var(--fc-sup)">12</span></div>
+      <div class="agg-flag">Only dimension where suppression &gt; activation</div>
+    </div>
+    <div class="agg-dim">
+      <div class="agg-dim-label">Openness to Alternatives</div>
+      <div class="agg-bars">
+        <div class="agg-bar act" data-h="38" style="height:0"></div>
+        <div class="agg-bar sup" data-h="16" style="height:0"></div>
+      </div>
+      <div class="agg-vals"><span style="color:var(--fc-act)">38</span> / <span style="color:var(--fc-sup)">16</span></div>
+    </div>
+    <div class="agg-dim">
+      <div class="agg-dim-label">Systems Perception</div>
+      <div class="agg-bars">
+        <div class="agg-bar act" data-h="21" style="height:0"></div>
+        <div class="agg-bar sup" data-h="9" style="height:0"></div>
+      </div>
+      <div class="agg-vals"><span style="color:var(--fc-act)">21</span> / <span style="color:var(--fc-sup)">9</span></div>
+    </div>
+    <div class="agg-dim">
+      <div class="agg-dim-label">Concern for Others</div>
+      <div class="agg-bars">
+        <div class="agg-bar act" data-h="219" style="height:0"></div>
+        <div class="agg-bar sup" data-h="55" style="height:0"></div>
+      </div>
+      <div class="agg-vals"><span style="color:var(--fc-act)">219</span> / <span style="color:var(--fc-sup)">55</span></div>
+    </div>
+  </div>
+</div>
+
+<!-- Key Finding -->
+<div class="finding">
+  <div class="finding-label">Key Finding</div>
+  <div class="finding-text">The discursive space where AI is imagined as enabling genuinely transformative sustainability futures, the "AI for the Future" zone, exists theoretically but is largely unoccupied. The technology marketed as sustainability's greatest enabler may be foreclosing the very imagination sustainability demands.</div>
+</div>
+
+<script>
+(function() {
+  // Animate counters
+  document.querySelectorAll('[data-count]').forEach(function(el) {
+    var target = parseInt(el.getAttribute('data-count'));
+    var duration = 1500;
+    var start = null;
+    function tick(now) {
+      if (!start) start = now;
+      var elapsed = now - start;
+      var progress = Math.min(elapsed / duration, 1);
+      var eased = 1 - Math.pow(1 - progress, 3);
+      el.textContent = Math.round(target * eased);
+      if (progress < 1) requestAnimationFrame(tick);
+    }
+    setTimeout(function() { requestAnimationFrame(tick); }, 1800);
+  });
+
+  // Animate FC bars
+  document.querySelectorAll('[data-w]').forEach(function(el) {
+    var w = el.getAttribute('data-w');
+    setTimeout(function() { el.style.width = w + '%'; }, 2200);
+  });
+
+  // Animate aggregate bars
+  var maxVal = 219;
+  document.querySelectorAll('.agg-bar[data-h]').forEach(function(el) {
+    var val = parseInt(el.getAttribute('data-h'));
+    var h = Math.max((val / maxVal) * 55, 3);
+    setTimeout(function() { el.style.height = h + 'px'; }, 2600);
+  });
+})();
+</script>
+
+</body>
+</html>
